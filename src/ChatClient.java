@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.Socket;
 
 public class ChatClient extends Frame {
     TextField tf = new TextField();
@@ -23,6 +25,7 @@ public class ChatClient extends Frame {
         });
         tf.addActionListener(new TFListener());
         setVisible(true);
+        connect();
     }
 
     private class TFListener implements ActionListener {
@@ -33,6 +36,14 @@ public class ChatClient extends Frame {
         }
     }
 
+    public void connect() {
+        try {
+            Socket s = new Socket("192.168.203.1", 8813);
+            System.out.println("connected");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public static void main(String[] args) {
         new ChatClient().launchFrame();
     }
