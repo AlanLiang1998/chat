@@ -6,13 +6,19 @@ import java.net.Socket;
 public class ChatServer {
     public static void main(String[] args) {
         try {
-            ServerSocket ss = new ServerSocket(8813);
-            while (true) {
+            boolean started = false;
+            ServerSocket ss = new ServerSocket(8888);
+            started = true;
+            while (started) {
+                boolean connected = false;
                 Socket s = ss.accept();
-                DataInputStream dis = new DataInputStream(s.getInputStream());
-                String str = dis.readUTF();
-                System.out.println(str);
                 System.out.println("A client connected!");
+                connected = true;
+                DataInputStream dis = new DataInputStream(s.getInputStream());
+                while (connected) {
+                    String str = dis.readUTF();
+                    System.out.println(str);
+                }
                 dis.close();
             }
         } catch (IOException e) {
