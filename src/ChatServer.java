@@ -5,24 +5,39 @@ import java.net.Socket;
 
 public class ChatServer {
     public static void main(String[] args) {
+        ServerSocket ss = null;
+        Socket s = null;
+        try {
+            ss = new ServerSocket(8888);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        DataInputStream dis = null;
         try {
             boolean started = false;
-            ServerSocket ss = new ServerSocket(8888);
             started = true;
             while (started) {
                 boolean connected = false;
-                Socket s = ss.accept();
+                s = ss.accept();
                 System.out.println("A client connected!");
                 connected = true;
-                DataInputStream dis = new DataInputStream(s.getInputStream());
+                dis = new DataInputStream(s.getInputStream());
                 while (connected) {
                     String str = dis.readUTF();
                     System.out.println(str);
                 }
-                dis.close();
+                //dis.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Client closed!");
+            //e.printStackTrace();
+        } finally {
+            try {
+                dis.close();
+                s.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
