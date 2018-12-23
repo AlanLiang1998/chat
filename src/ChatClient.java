@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -13,6 +14,8 @@ public class ChatClient extends Frame {
     TextArea ta = new TextArea();
     Socket s = null;
     DataOutputStream dos = null;
+    DataInputStream dis = null;
+    boolean connected = false;
 
     public void launchFrame() {
         setTitle("chat");
@@ -30,13 +33,14 @@ public class ChatClient extends Frame {
         tf.addActionListener(new TFListener());
         setVisible(true);
         connect();
+        new Thread(new ReceiveThread()).start();
     }
 
     private class TFListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
             String str = tf.getText().trim();
-            ta.setText(str);
+            //ta.setText(str);
             tf.setText("");
             try {
                 dos.writeUTF(str);
@@ -52,7 +56,9 @@ public class ChatClient extends Frame {
         try {
             s = new Socket("192.168.203.1", 8888);
             System.out.println("connected");
+            connected = true;
             dos = new DataOutputStream(s.getOutputStream());
+            dis = new DataInputStream(s.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,9 +67,24 @@ public class ChatClient extends Frame {
     public void disconnect() {
         try {
             dos.close();
+            dis.close();
             s.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private class ReceiveThread implements Runnable {
+
+        public void run() {
+            try {
+                while (connected) {
+                    String str = dis.readUTF();
+                    ta.setText(ta.getText() + str + "\n");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

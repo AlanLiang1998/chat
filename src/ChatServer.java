@@ -28,6 +28,7 @@ public class ChatServer {
             while (started) {
                 Socket s = ss.accept();
                 Client c = new Client(s);
+                System.out.println("A client connected!");
                 clients.add(c);
                 new Thread(c).start();
             }
