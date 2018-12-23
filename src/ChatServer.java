@@ -66,7 +66,7 @@ public class ChatServer {
             try {
                 dos.writeUTF(str);
             } catch (IOException e) {
-                e.printStackTrace();
+                clients.remove(this);
             }
         }
 

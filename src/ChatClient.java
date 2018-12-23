@@ -8,6 +8,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ChatClient extends Frame {
     TextField tf = new TextField();
@@ -66,6 +67,7 @@ public class ChatClient extends Frame {
 
     public void disconnect() {
         try {
+            connected = false;
             dos.close();
             dis.close();
             s.close();
@@ -82,6 +84,8 @@ public class ChatClient extends Frame {
                     String str = dis.readUTF();
                     ta.setText(ta.getText() + str + "\n");
                 }
+            } catch (SocketException e) {
+                System.out.println("退出了,bye!");
             } catch (IOException e) {
                 e.printStackTrace();
             }
